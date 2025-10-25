@@ -40,13 +40,13 @@
                 </svg>
                 Farcaster Etkileşim Analizcisi
             </h1>
-            <p class="text-sm text-gray-500 mt-1">Otomatik Web3 Kimliği ve NFT Basımı</p>
+            <p class="text-sm text-gray-500 mt-1">Gerçek Web3 Bağlantısı ve NFT Basımı (Base Mainnet)</p>
         </header>
 
         <!-- Cüzdan Bağlantı Alanı -->
         <div id="wallet-section" class="mb-6 p-4 border border-indigo-200 bg-indigo-50 rounded-xl">
             <div id="wallet-status" class="flex items-center justify-between text-sm font-medium">
-                <span id="wallet-label" class="text-gray-700">Ağ: <span id="network-info" class="font-bold text-gray-800">Yükleniyor...</span></span>
+                <span id="wallet-label" class="text-gray-700">Ağ: <span id="network-info" class="font-bold text-red-500">Yükleniyor...</span></span>
                 <span id="wallet-label" class="text-gray-700">Cüzdan: <span id="wallet-info" class="font-bold text-red-500">Bağlı Değil</span></span>
                 <button id="connect-wallet-button" class="flex items-center primary-bg text-white font-semibold py-2 px-4 rounded-lg hover:opacity-90 transition duration-150 shadow-md" onclick="connectWallet()">
                     <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m0 0l-1 1a2 2 0 00-2 2h10a2 2 0 002-2v-2"></path></svg>
@@ -56,18 +56,18 @@
             <p id="tx-info" class="text-xs mt-2 text-center text-red-600 hidden">Lütfen MetaMask işlemini onaylayın...</p>
         </div>
 
-        <!-- Kullanıcı Giriş Formu (Artık Otomatik Doldurulacak) -->
+        <!-- Kullanıcı Giriş Formu -->
         <div id="input-section" class="mb-6">
             <label for="fname" class="block text-sm font-medium text-gray-700 mb-2">
-                Farcaster Kullanıcı Adınız (Cüzdandan Alındı):
+                Farcaster Kullanıcı Adınızı (fname) Girin:
             </label>
             <div class="flex space-x-2">
-                <input type="text" id="fname" placeholder="Kullanıcı adı bekleniyor..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-100" required disabled>
-                <button id="analyze-button" class="primary-bg text-white font-semibold py-3 px-5 rounded-lg transition duration-150 shadow-md flex items-center justify-center cursor-pointer transaction-button" onclick="analyzeEngagers()">
+                <input type="text" id="fname" placeholder="örn: dwr" class="flex-grow p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" required>
+                <button id="analyze-button" class="bg-gray-400 text-white font-semibold py-3 px-5 rounded-lg transition duration-150 shadow-md flex items-center justify-center cursor-not-allowed transaction-button" onclick="analyzeEngagers()" disabled>
                     <svg id="button-icon" class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                     </svg>
-                    Analiz Başlatılıyor...
+                    Analiz Et
                 </button>
             </div>
             <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
@@ -77,7 +77,7 @@
         <div id="results-section" class="hidden">
             <h2 class="text-xl font-bold primary-text mb-4 border-b border-gray-200 pb-2">
                 <span id="target-fname" class="font-mono bg-indigo-100 px-2 py-0.5 rounded text-base"></span>
-                için En Çok Etkileşime Girenler (Like + Comment + Recast)
+                için En Çok Etkileşime Girenler (API Simülasyonu)
             </h2>
             <ul id="engager-list" class="space-y-3 mb-6">
                 <!-- Etkileşimciler buraya eklenecek -->
@@ -102,8 +102,18 @@
         // GERÇEK PINATA API ANAHTARI (Sadece Farcaster veri simülasyonu için kullanılır)
         const PINATA_API_KEY = "a421c7313e15038a226a"; 
         
-        // AKILLI KONTRAT BİLGİLERİ (Sepolia Test Ağı Varsayılmıştır)
-        const CONTRACT_ADDRESS = "0x40D4A00D7799E414902F843063A4821557A9D6c6"; // Mock Sepolia Adresi
+        // --- BASE MAINNET AYARLARI ---
+        const TARGET_CHAIN_ID_DEC = 8453;
+        const TARGET_CHAIN_ID_HEX = '0x2105'; // Base Mainnet Chain ID (Hex)
+        const TARGET_NETWORK_NAME = 'Base';
+
+        // --- ÖNEMLİ DEĞİŞİKLİK ---
+        // BU KONTRAT ADRESİNİ, SİZİN BASE MAINNET ÜZERİNDE DEPLOY ETTİĞİNİZ
+        // KENDİ AKILLI KONTRATINIZIN ADRESİ İLE DEĞİŞTİRMENİZ GEREKİR.
+        const CONTRACT_ADDRESS = "0xSIIN_BASE_MAINNET_KONTRAT_ADRESINIZ"; // <-- BURAYI GÜNCELLEYİN!
+        // --- ÖNEMLİ DEĞİŞİKLİK ---
+
+        // ABI'nızın, deploy ettiğiniz kontrat ile eşleştiğinden emin olun
         const CONTRACT_ABI = [
             // incrementCounter fonksiyonu
             { "inputs": [], "name": "incrementCounter", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
@@ -134,17 +144,6 @@
         const networkInfoSpan = document.getElementById('network-info');
         const counterDisplay = document.getElementById('counter-display');
         const txInfo = document.getElementById('tx-info');
-        
-        // --- Simüle Edilmiş Veri Kümeleri ---
-        
-        // Simüle Edilmiş Farcaster Adres-Kullanıcı Adı Eşleştirmesi
-        // Normalde Farcaster API'si ile yapılır
-        const mockAddressToFname = {
-            // Örnek adresler (küçük harfle)
-            "0x9d901869811f5d34195155c5c02b1f818863f6a2": "dwr",
-            "0x456def789abc123456def789abc123456def789a": "nodepro",
-            "0x0000000000000000000000000000000000000001": "web3_user" // Varsayılan kullanıcı
-        };
 
         // Simüle Edilmiş Farcaster Etkileşim Verileri
         const mockEngagers = {
@@ -155,15 +154,6 @@
                 { fname: 'greg', fid: 5, engagement_score: 410, casts: 45, followers: '800' },
                 { fname: 'alice', fid: 6, engagement_score: 330, casts: 150, followers: '1.3k' },
             ],
-            // Yeni otomatik kullanıcı için özel veri seti
-            'web3_user': [
-                { fname: 'crypto_core', fid: 801, engagement_score: 1500, casts: 80, followers: '7k' },
-                { fname: 'dev_ops', fid: 802, engagement_score: 1250, casts: 150, followers: '10k' },
-                { fname: 'farcaster_fan', fid: 803, engagement_score: 950, casts: 40, followers: '5k' },
-                { fname: 'zora_builder', fid: 804, engagement_score: 780, casts: 95, followers: '3.5k' },
-                { fname: 'base_addict', fid: 805, engagement_score: 690, casts: 210, followers: '2.8k' },
-            ],
-            // 'nodepro' için özel, simüle edilmiş veri seti
             'nodepro': [
                 { fname: 'synth_dev', fid: 501, engagement_score: 1100, casts: 300, followers: '50k' },
                 { fname: 'web3_wizard', fid: 502, engagement_score: 950, casts: 150, followers: '22k' },
@@ -171,6 +161,13 @@
                 { fname: 'chain_explorer', fid: 504, engagement_score: 700, casts: 210, followers: '18k' },
                 { fname: 'crypto_analyst', fid: 505, engagement_score: 610, casts: 40, followers: '7k' },
             ],
+            'simulasyoncu': [
+                { fname: 'mehmet', fid: 101, engagement_score: 650, casts: 50, followers: '300' },
+                { fname: 'ayse', fid: 102, engagement_score: 500, casts: 90, followers: '450' },
+                { fname: 'deniz', fid: 103, engagement_score: 300, casts: 10, followers: '200' },
+                { fname: 'kaan', fid: 104, engagement_score: 250, casts: 30, followers: '150' },
+                { fname: 'zeynep', fid: 105, engagement_score: 200, casts: 60, followers: '1000' },
+            ]
         };
 
         // --- Web3 ve Cüzdan Fonksiyonları ---
@@ -180,16 +177,79 @@
             return address ? address.substring(0, 6) + '...' + address.substring(address.length - 4) : 'Bilinmiyor';
         }
 
-        // Adresten Kullanıcı Adını Çözme Simülasyonu (Farcaster API'si)
-        async function resolveFnameFromAddress(address) {
-            // Normalde burada Pinata veya Farcaster Hub API'si çağrılırdı.
-            // Örneğin: /v2/fname_by_address?address=...
-            await new Promise(resolve => setTimeout(resolve, 500)); // Simülasyon gecikmesi
-            
-            const normalizedAddress = address.toLowerCase();
-            const resolvedFname = mockAddressToFname[normalizedAddress] || "web3_user"; // Varsayılan kullanıcı
-            
-            return resolvedFname;
+        // 'Base' Ağına Geçişi Zorunlu Kılma Fonksiyonu
+        async function switchToBaseNetwork() {
+            if (!provider) {
+                console.error("Provider başlatılamadı.");
+                return false;
+            }
+
+            try {
+                const network = await provider.getNetwork();
+                if (network.chainId === TARGET_CHAIN_ID_DEC) {
+                    networkInfoSpan.textContent = TARGET_NETWORK_NAME.toUpperCase();
+                    networkInfoSpan.classList.remove('text-red-500');
+                    networkInfoSpan.classList.add('text-green-600');
+                    return true; // Zaten doğru ağda
+                }
+
+                // Doğru ağda değil, UI'ı güncelle
+                networkInfoSpan.textContent = 'YANLIŞ AĞ';
+                networkInfoSpan.classList.remove('text-green-600');
+                networkInfoSpan.classList.add('text-red-500');
+                
+                txInfo.textContent = `Lütfen MetaMask'i "${TARGET_NETWORK_NAME}" ağına geçirin...`;
+                txInfo.classList.remove('hidden');
+
+                // Ağı değiştirmeyi dene
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: TARGET_CHAIN_ID_HEX }],
+                });
+                
+                // Başarılı olursa (veya chainChanged listener tetiklenirse)
+                networkInfoSpan.textContent = TARGET_NETWORK_NAME.toUpperCase();
+                networkInfoSpan.classList.remove('text-red-500');
+                networkInfoSpan.classList.add('text-green-600');
+                txInfo.classList.add('hidden');
+                return true;
+
+            } catch (switchError) {
+                // Hata Kodu 4902: Zincir (Ağ) MetaMask'e eklenmemiş
+                if (switchError.code === 4902) {
+                    try {
+                        txInfo.textContent = `"${TARGET_NETWORK_NAME}" ağı MetaMask'e ekleniyor...`;
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [
+                                {
+                                    chainId: TARGET_CHAIN_ID_HEX,
+                                    chainName: 'Base',
+                                    nativeCurrency: {
+                                        name: 'Ethereum',
+                                        symbol: 'ETH',
+                                        decimals: 18,
+                                    },
+                                    rpcUrls: ['https://mainnet.base.org'],
+                                    blockExplorerUrls: ['https://basescan.org'],
+                                },
+                            ],
+                        });
+                        // Eklendikten sonra tekrar deneme veya sayfa yenileme (listener halleder)
+                        return true;
+                    } catch (addError) {
+                        console.error("Base ağı eklenemedi:", addError);
+                        errorMessage.textContent = '"Base" ağı eklenemedi. Lütfen manuel olarak ekleyin.';
+                        errorMessage.classList.remove('hidden');
+                        return false;
+                    }
+                }
+                // Diğer hatalar (örn: kullanıcı reddetti)
+                console.error("Ağ değiştirme hatası:", switchError);
+                errorMessage.textContent = `Lütfen "Base" ağına geçişi onaylayın. (Hata: ${switchError.message})`;
+                errorMessage.classList.remove('hidden');
+                return false;
+            }
         }
 
         // Cüzdan Bağlantısı
@@ -202,23 +262,30 @@
 
             loadingIndicator.classList.remove('hidden');
             txInfo.classList.add('hidden');
+            errorMessage.classList.add('hidden');
             
             try {
-                // Hesapları iste ve provider/signer'ı ayarla
+                // Hesapları iste
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 walletAddress = accounts[0];
                 
+                // Provider'ı başlat
                 provider = new ethers.providers.Web3Provider(window.ethereum);
+
+                // --- AĞ KONTROLÜ VE DEĞİŞTİRME ---
+                const networkSwitchSuccess = await switchToBaseNetwork();
+                if (!networkSwitchSuccess) {
+                    loadingIndicator.classList.add('hidden');
+                    // Hata mesajı zaten `switchToBaseNetwork` tarafından ayarlandı.
+                    return; 
+                }
+                // --- AĞ KONTROLÜ BİTTİ ---
+
+                // Signer ve Kontratı ayarla
                 signer = provider.getSigner();
-                
-                // Kontrat nesnesini oluştur
                 contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-                // Ağ bilgilerini al
-                const network = await provider.getNetwork();
-                networkInfoSpan.textContent = network.name.toUpperCase() || 'Bilinmeyen Ağ';
-
-                // UI Güncelleme (Cüzdan Bilgisi)
+                // UI Güncelleme
                 walletInfoSpan.textContent = shortenAddress(walletAddress);
                 walletInfoSpan.classList.remove('text-red-500');
                 walletInfoSpan.classList.add('text-green-600');
@@ -226,22 +293,13 @@
                 connectWalletButton.disabled = true;
                 connectWalletButton.classList.replace('primary-bg', 'bg-green-600');
                 
-                // 1. Farcaster Kullanıcı Adını Çöz
-                const resolvedFname = await resolveFnameFromAddress(walletAddress);
-                fnameInput.value = resolvedFname;
-                fnameInput.placeholder = `@${resolvedFname} (Otomatik Alındı)`;
-
-                // 2. Sayaç değerini çek
-                await fetchCounterValue();
-                
-                // 3. UI'ı otomatik analiz için hazırla
+                // Analiz butonunu etkinleştir
                 analyzeButton.disabled = false;
                 analyzeButton.classList.replace('bg-gray-400', 'primary-bg');
                 analyzeButton.classList.replace('cursor-not-allowed', 'cursor-pointer');
-                analyzeButton.innerHTML = `<svg id="button-icon" class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>Analiz Et (Otomatik Başlat)`;
-
-                // 4. Analizi Otomatik Olarak Başlat
-                analyzeEngagers();
+                
+                // Sayaç değerini çek
+                await fetchCounterValue();
 
             } catch (error) {
                 console.error("Cüzdan bağlantı hatası:", error);
@@ -260,13 +318,17 @@
                 counterDisplay.textContent = `Sayaç Durumu: ${count.toString()}`;
             } catch (error) {
                 console.error("Sayaç değeri çekilemedi:", error);
-                counterDisplay.textContent = `Sayaç Durumu: Kontrat Hatası`;
+                if (CONTRACT_ADDRESS === "0xSIIN_BASE_MAINNET_KONTRAT_ADRESINIZ") {
+                    counterDisplay.textContent = 'Sayaç Durumu: Kontrat adresi ayarlanmamış!';
+                } else {
+                    counterDisplay.textContent = 'Sayaç Durumu: Kontrat Hatası (Yanlış Adres?)';
+                }
             }
         }
 
         // Analiz Sonrası Sayaç Artırma İşlemi
         async function handleIncrementCounter() {
-            txInfo.textContent = 'Sayaç artırma işlemi için MetaMask\'i kontrol edin... (Analiz doğrulama)';
+            txInfo.textContent = 'Sayaç artırma işlemi için MetaMask\'i kontrol edin...';
             txInfo.classList.remove('hidden', 'text-green-600', 'text-red-600');
             txInfo.classList.add('text-red-600');
             
@@ -282,19 +344,18 @@
                 
                 // Yeni sayaç değerini çek
                 await fetchCounterValue();
+                return true; // Başarı
 
             } catch (error) {
                 console.error("Sayaç artırma işlemi başarısız:", error);
                 txInfo.textContent = 'Sayaç Artırma Başarısız. İşlem reddedildi veya hata oluştu.';
                 txInfo.classList.replace('text-green-600', 'text-red-600');
-                throw error; // Hata durumunda akışı durdur
+                return false; // Başarısızlık
             }
         }
         
         // NFT Basım İşlemi
         async function handleMintNFT() {
-            // Basılacak NFT ID'sini mevcut sayaç değerinden alıyoruz
-            // NOT: Sayaç değeri artırıldığı için bu değer, basılacak yeni token ID'sini temsil eder.
             const currentCounter = await contract.counter();
             const tokenId = currentCounter.toNumber(); 
 
@@ -325,15 +386,18 @@
 
         const fetchEngagers = async (fname, apiKey) => {
             const normalizedFname = fname.toLowerCase();
-            console.log(`[API Simülasyonu] '@${fname}' için Etkileşim Analizi Başlatıldı.`);
-            // Simülasyon: Gerçek Farcaster API'si burada Like, Comment ve Recast metriklerini hesaplar.
+            console.log(`[API Simülasyonu] Pinata API Key (${apiKey.substring(0, 4)}...) ile '@${fname}' için analiz başlatılıyor...`);
+            
             await new Promise(resolve => setTimeout(resolve, 2000)); // 2 saniye API gecikmesi simülasyonu
 
+            if (normalizedFname === 'hata') {
+                throw new Error("Pinata API: Veri çekme veya hesaplama sırasında bir hata oluştu.");
+            }
+            
             if (mockEngagers[normalizedFname]) {
                 return mockEngagers[normalizedFname];
             } else {
-                 // Eğer eşleşme yoksa, genel bir veri döndürülür
-                return mockEngagers['nodepro'].map(user => ({
+                return mockEngagers['simulasyoncu'].map(user => ({
                     ...user,
                     fname: user.fname + ` (target: ${fname})` 
                 }));
@@ -347,6 +411,12 @@
             errorMessage.classList.add('hidden');
             txInfo.classList.add('hidden');
 
+            if (CONTRACT_ADDRESS === "0xSIIN_BASE_MAINNET_KONTRAT_ADRESINIZ") {
+                errorMessage.textContent = 'Lütfen koddaki "CONTRACT_ADDRESS" değişkenini güncelleyin.';
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
             if (!walletAddress || !contract) {
                 errorMessage.textContent = 'Lütfen önce cüzdanınızı bağlayın.';
                 errorMessage.classList.remove('hidden');
@@ -354,44 +424,42 @@
             }
 
             if (!fname) {
-                errorMessage.textContent = 'Kullanıcı adı otomatik olarak alınamadı. Lütfen sayfayı yenileyin.';
+                errorMessage.textContent = 'Lütfen bir kullanıcı adı girin.';
                 errorMessage.classList.remove('hidden');
                 return;
             }
 
-            // Butonları devre dışı bırak ve yükleniyor göstergesini aç
             resultsSection.classList.add('hidden');
             loadingIndicator.classList.remove('hidden');
             analyzeButton.disabled = true;
             mintCastButton.disabled = true;
-            analyzeButton.innerHTML = `<svg class="animate-spin w-5 h-5 mr-1" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Analiz Ediliyor...`;
-
 
             try {
                 // 1. Farcaster API Simülasyonu ile veriyi çek
                 const engagers = await fetchEngagers(fname, PINATA_API_KEY);
                 
                 // 2. Kontrat üzerindeki sayacı artır (Web3 İşlemi)
-                await handleIncrementCounter();
+                const incrementSuccess = await handleIncrementCounter();
+                if (!incrementSuccess) {
+                    // Sayaç artırma başarısız olduysa, akışı durdur
+                    throw new Error("Sayaç artırma işlemi başarısız oldu.");
+                }
                 
                 // 3. Sonuçları göster
                 updateUI(engagers, fname);
 
             } catch (error) {
-                // Hata, ya TX'te ya da API'de oluştu.
                 console.error("Genel Analiz Akışı Hatası:", error);
                 if (!txInfo.classList.contains('text-green-600')) {
-                    errorMessage.textContent = `Analiz sırasında hata oluştu: İşlem reddedildi veya sunucu hatası.`;
+                    errorMessage.textContent = `Analiz sırasında hata oluştu: ${error.message}`;
                     errorMessage.classList.remove('hidden');
                 }
                 resultsSection.classList.add('hidden');
                 
             } finally {
-                // Yükleniyor göstergesini kapat ve butonları etkinleştir
                 loadingIndicator.classList.add('hidden');
                 analyzeButton.disabled = false;
                 mintCastButton.disabled = false; 
-                analyzeButton.innerHTML = `<svg id="button-icon" class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>Analiz Tamamlandı`;
             }
         }
 
@@ -451,7 +519,6 @@
                 window.open(warpcastUrl, '_blank');
                 
             } catch (error) {
-                // handleMintNFT zaten hata mesajı gösterdi
                 console.error("Mint ve Cast Akışı Hatası:", error);
             } finally {
                 loadingIndicator.classList.add('hidden');
@@ -462,21 +529,17 @@
         // Sayfa yüklendiğinde Web3 Event Listener'larını ayarla
         document.addEventListener('DOMContentLoaded', () => {
             analyzeButton.disabled = true;
-            // İlk durumda manuel girişi simüle eden metin kalsın
-            fnameInput.placeholder = 'Kullanıcı adı bekleniyor...';
-            analyzeButton.innerHTML = `<svg id="button-icon" class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>Analiz Et`;
-
             if (typeof window.ethereum !== 'undefined') {
-                // Ağ veya hesap değiştiğinde yeniden yükle
+                // Ağ veya hesap değiştiğinde yeniden yükle (ağ değişimini doğru yönetmek için)
                 window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length > 0) {
-                        connectWallet();
-                    } else {
-                        // Cüzdan bağlantısı kesildi
-                        window.location.reload(); 
-                    }
+                    window.location.reload(); 
                 });
-                window.ethereum.on('chainChanged', () => {
+                window.ethereum.on('chainChanged', (chainId) => {
+                    if (chainId !== TARGET_CHAIN_ID_HEX) {
+                        networkInfoSpan.textContent = 'YANLIŞ AĞ';
+                        networkInfoSpan.classList.remove('text-green-600');
+                        networkInfoSpan.classList.add('text-red-500');
+                    }
                     window.location.reload();
                 });
             } else {
@@ -488,3 +551,4 @@
 
 </body>
 </html>
+
