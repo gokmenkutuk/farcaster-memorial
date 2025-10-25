@@ -1,0 +1,17 @@
+# Node ve ortam dosyaları
+node_modules/
+.env
+.env.local
+.next/
+dist/
+out/
+coverage/
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+
+# Vercel veya IDE klasörleri
+.vercel/
+.idea/
+.vscode/
